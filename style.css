@@ -1,0 +1,27 @@
+.container {
+  max-width: 400px;
+}
+
+input[type="text"],
+input[type="text"]:focus {
+  color: rgb(15, 19, 19);
+  border: none;
+  background: rgba(255, 255, 255, 0.993);
+  max-width: 400px;
+}
+
+::placeholder {
+  color: rgb(255, 251, 251);
+}
+
+.delete {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+.form-add-todo {
+  font-size: 20px;
+}
