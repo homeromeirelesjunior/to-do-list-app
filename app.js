@@ -1,35 +1,50 @@
-const addTodo = document.querySelector('.form-add-todo')
+const formAddTodo = document.querySelector('.form-add-todo')
 const todosList = document.querySelector('.todos-container')
-const searchTodo = document.querySelector('.form-search input')
+const inputSearchTodo = document.querySelector('.form-search input')
 
 const removeTodo = event => {
     const clickedElement = event.target
     const dataDeleteValue = clickedElement.dataset.delete
-    const todo = document.querySelector(`[data-todo="${dataDeleteValue}"]`)
 
-    if(dataDeleteValue) todo.remove()
+    if(dataDeleteValue) {    
+        const todo = document.querySelector(`[data-todo="${dataDeleteValue}"]`)
+        todo.remove()
+    }
 }
 
-const filterTodos = event => {
+const manipulateTodos = event => {
     const inputValue = event.target.value.trim().toLowerCase()
     const todos = Array.from(todosList.children)
 
-    todos
-        .filter(todo => !todo.textContent.toLowerCase().includes(inputValue))
-        .forEach(todo => {
-            todo.classList.add('hidden')
-            todo.classList.remove('d-flex')
-        })
+    hideTodos(todos, inputValue)
+    showTodos(todos, inputValue)
+}
 
-    todos
-        .filter(todo => todo.textContent.toLowerCase().includes(inputValue))
-        .forEach(todo => {
-            todo.classList.add('d-flex')
-            todo.classList.remove('hidden')
+const filterTodos = (todos, inputValue, returnMatchedTodos) => todos
+    .filter(todo => {
+        const matchedTodos = todo.textContent.toLowerCase().includes(inputValue)
+        return returnMatchedTodos ? matchedTodos : !matchedTodos
+    })
+    
+const manipulateClasses = (todos, classToAdd, classToRemove) => {
+    todos.forEach(todo => {
+        todo.classList.add(classToAdd)
+        todo.classList.remove(classToRemove)
     })
 }
 
-const addTodoToList = inputValue => {
+const hideTodos = (todos, inputValue) => {
+    const todosToHide = filterTodos(todos, inputValue, false)
+    manipulateClasses(todosToHide, 'hidden', 'd-flex')
+}
+
+const showTodos = (todos, inputValue) => {
+    const todosToShow = filterTodos(todos, inputValue, true)
+    manipulateClasses(todosToShow, 'd-flex', 'hidden')
+}
+
+
+const updateTodosList = inputValue => {
     todosList.innerHTML += `
         <li class="list-group-item d-flex align-items-center justify-content-between" data-todo="${inputValue}"> 
             <span>${inputValue}</span>
@@ -38,22 +53,18 @@ const addTodoToList = inputValue => {
     `
 }
 
-const validateNewTodo = () => {
-    const inputValue = event.target.add.value.trim()
-
-    if(inputValue.length) {
-        addTodoToList(inputValue)
+const addTodo = event => {
+    event.preventDefault()
+  
+    const inputValue = event.target.add.value.trim()   
+  
+    if (inputValue.length) {  
+      updateTodosList(inputValue)
     }
 
-    event.target.reset()
+    event.target.reset()  
 }
 
-const addNewTodo = event => {
-    event.preventDefault()
-
-    validateNewTodo()
-}
-
-addTodo.addEventListener('submit', addNewTodo)
+formAddTodo.addEventListener('submit', addTodo)
 todosList.addEventListener('click', removeTodo)
-searchTodo.addEventListener('input', filterTodos)
+inputSearchTodo.addEventListener('input', manipulateTodos)
